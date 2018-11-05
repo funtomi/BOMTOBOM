@@ -17,7 +17,24 @@ namespace ExportBOMToERP {
             } 
             _bItem = item;
             //20181102 added by kexp 添加账套属性
-            _senderSeq = item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ) == null ? 0 : Convert.ToInt32(item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ));
+            GetSenderSeq(item);
+        }
+
+        /// <summary>
+        /// 获取sender序号设置
+        /// </summary>
+        /// <param name="item"></param>
+        private void GetSenderSeq(DEBusinessItem item) {
+            var senderSeq = item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ) == null ? "0" : item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ).ToString();
+            var seqArr = senderSeq.Split(',');
+            if (seqArr == null || seqArr.Length == 0) {
+                return;
+            }
+            _senderSeq = new int[seqArr.Length];
+            for (int i = 0; i < seqArr.Length; i++) {
+                var seq = Convert.ToInt16(seqArr[i].Trim());
+                _senderSeq[i] = seq;
+            }
         }
         private DEBusinessItem _bItem;
         private string _eaiAddress;
@@ -30,7 +47,7 @@ namespace ExportBOMToERP {
                 return _senders; }
         }
         private string[] _senders;
-        private int _senderSeq;
+        private int[] _senderSeq;
         //20180821 added by kexp 添加对已有且不需要导入的项定版时判断
         private static string SYS_ERROR = "sys_error";
         private static string EAI_SENDER_SEQ = "EAISENDERSEQ";
@@ -145,43 +162,52 @@ namespace ExportBOMToERP {
             return true;
         }
 
-        private bool DoExportImplement(DEBusinessItem bItem, string typeStr, out string errText) {
-            XmlDocument doc = new XmlDocument();
-            bool succeed = true;
-            errText = "";
-            string hasStr = "重复";
-            string oprt = "Add";
-            var dal = DalFactory.Instance.CreateDal(bItem, typeStr);
-            //20180821 added by kexp 添加对已有且不需要导入的项定版时判断
-            if (dal==null) {
-                errText = SYS_ERROR;
-                return false;
-            }
-            doc = dal.CreateXmlDocument(oprt);
-            if (doc==null) {
-                return false;
-            }
-            succeed = ConnectEAI(doc.OuterXml, out errText);
-            if (!succeed && errText.Contains(hasStr)) {
-                oprt = "Edit";
-                doc = dal.CreateXmlDocument(oprt);
-                succeed = ConnectEAI(doc.OuterXml, out errText);
-            }
-            return succeed;
-        }
-
         /// <summary>
         /// 导入到ERP
         /// </summary>
         /// <param name="xml"></param>
-        private bool ConnectEAI(string xml, out string errText) {
-            if (string.IsNullOrEmpty(xml)) {
+        private bool DoExportImplement(DEBusinessItem bItem, string typeStr, out string errText) {
+            if (bItem == null) {
                 errText = "";
                 return false;
             }
+            XmlDocument doc = new XmlDocument();
             errText = "";
+            var dal = DalFactory.Instance.CreateDal(bItem, typeStr);
+            bool succeed = true;
+            string hasStr = "重复";
+            string oprt = "Add";
+            doc = dal.CreateXmlDocument(oprt);
+            if (doc == null) {
+                return false;
+            }
             //20181102 added by kexp 添加账套属性配置
-            xml = ModifyXmlHeaderByConfig(xml,_senderSeq);
+            if (_senderSeq == null || _senderSeq.Length == 0) {
+                succeed = DoConnect(doc.OuterXml, ref errText);
+                if (!succeed && errText.Contains(hasStr)) {
+                    oprt = "Edit";
+                    doc = dal.CreateXmlDocument(oprt);
+                    succeed = DoConnect(doc.OuterXml, ref errText);
+                }
+            } else {
+                for (int i = 0; i < _senderSeq.Length; i++) {
+                    var xml = ModifyXmlHeaderByConfig(doc.OuterXml, _senderSeq[i]);
+                    succeed = DoConnect(xml, ref errText);
+                    if (!succeed && errText.Contains(hasStr)) {
+                        oprt = "Edit";
+                        doc = dal.CreateXmlDocument(oprt);
+                        xml = ModifyXmlHeaderByConfig(doc.OuterXml, _senderSeq[i]);
+                        succeed = DoConnect(xml, ref errText);
+                    }
+                    if (!succeed) {
+                        return succeed;
+                    }
+                }
+            }
+            return succeed;
+        }
+
+        private bool DoConnect(string xml, ref string errText) {
             MSXML2.XMLHTTPClass xmlHttp = new MSXML2.XMLHTTPClass();
             xmlHttp.open("POST", EaiAddress, false, null, null);//TODO：地址需要改
             xmlHttp.send(xml);
@@ -231,7 +257,7 @@ namespace ExportBOMToERP {
                 return xml;
             }
             sender.Attributes["sender"].Value = senderNum;
-            return xml;
+            return doc.OuterXml;
 
         }
         #endregion
