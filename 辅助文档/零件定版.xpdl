@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package Id="Package01" Name="Business Process Template" xmlns:xpdl="http://www.wfmc.org/2004/XPDL2.0alpha">
+    <PackageHeader>
+        <XPDLVersion>2.0</XPDLVersion>
+        <Vendor>TiPLM</Vendor>
+        <Created>2018/9/28</Created>
+    </PackageHeader>
+    <WorkflowProcesses>
+        <WorkflowProcess Id="3828a6c4-794e-4e76-a864-c2cd0439d28c" Name="零件定版">
+            <ProcessHeader DurationUnit="D">
+                <Description />
+                <Priority>1</Priority>
+                <TimeEstimation>
+                    <Duration>3</Duration>
+                </TimeEstimation>
+            </ProcessHeader>
+            <DataFields>
+                <DataField Id="01118d73-4147-4341-8a12-0baeaaf1eabe" Name="定版审核">
+                    <DataType>
+                        <ExternalReference location="./ExtendedAttributes/ExtendedAttribute/@Name='DataType'" />
+                    </DataType>
+                    <InitialValue />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="DataType" Value="10" />
+                        <ExtendedAttribute Name="IsOutput" Value="1" />
+                        <ExtendedAttribute Name="IsInput" Value="1" />
+                        <ExtendedAttribute Name="ContainedVariables" Value="8ea6a1a4-f00c-47f3-b65b-4c796be70d81" />
+                    </ExtendedAttributes>
+                </DataField>
+                <DataField Id="9d4febd1-7079-4085-ac4f-af19af40bc8b" Name="$审核文档">
+                    <DataType>
+                        <ExternalReference location="./ExtendedAttributes/ExtendedAttribute/@Name='DataType'" />
+                    </DataType>
+                    <InitialValue />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="DataType" Value="9" />
+                        <ExtendedAttribute Name="IsOutput" Value="1" />
+                        <ExtendedAttribute Name="IsInput" Value="1" />
+                    </ExtendedAttributes>
+                </DataField>
+                <DataField Id="8ea6a1a4-f00c-47f3-b65b-4c796be70d81" Name="定版审核">
+                    <DataType>
+                        <ExternalReference location="./ExtendedAttributes/ExtendedAttribute/@Name='DataType'" />
+                    </DataType>
+                    <InitialValue>true</InitialValue>
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="DataType" Value="3" />
+                        <ExtendedAttribute Name="IsOutput" Value="1" />
+                        <ExtendedAttribute Name="IsInput" Value="1" />
+                    </ExtendedAttributes>
+                </DataField>
+            </DataFields>
+            <Activities>
+                <Activity Id="7666b388-bf6d-4f43-8209-df0a688cf573" Name="路由2">
+                    <Route />
+                    <Icon XCOORD="557" YCOORD="78" WIDTH="38" HEIGHT="38" />
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="XOR" IncomingCondition="任意一个节点完成" />
+                            <Split Type="COMPLEX" OutgoingCondition="定版审核" />
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                </Activity>
+                <Activity Id="6e34ae3b-92fe-4f52-938f-7b8229ca1ba3" Name="路由1">
+                    <Route />
+                    <Icon XCOORD="259" YCOORD="223" WIDTH="38" HEIGHT="38" />
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Join Type="XOR" IncomingCondition="任意一个节点完成" />
+                            <Split Type="AND" OutgoingCondition="所有后继节点都被触发" />
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                </Activity>
+                <Activity Id="90674bc7-4cf5-4e29-ba28-717d7dcdbc93" Name="定版">
+                    <Description />
+                    <Priority>2</Priority>
+                    <Icon XCOORD="557" YCOORD="241" WIDTH="38" HEIGHT="38" />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="IsAutomatic" Value="0" />
+                        <ExtendedAttribute Name="OverTimeHandleRule" Value="不做处理" />
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="54c381f6-6ae1-41ba-90a0-1e4801995073" Name="编制">
+                    <Description />
+                    <Priority>1</Priority>
+                    <Icon XCOORD="391" YCOORD="230" WIDTH="38" HEIGHT="38" />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="IsAutomatic" Value="0" />
+                        <ExtendedAttribute Name="OverTimeHandleRule" Value="不做处理" />
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="0794f251-daa2-41d1-8ec0-da0102eb8344" Name="End">
+                    <Description />
+                    <Priority>1</Priority>
+                    <Icon XCOORD="794" YCOORD="235" WIDTH="38" HEIGHT="38" />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="IsAutomatic" Value="3" />
+                        <ExtendedAttribute Name="OverTimeHandleRule" Value="发出警告" />
+                    </ExtendedAttributes>
+                </Activity>
+                <Activity Id="89b94347-be1a-49c3-b6c9-272e9549d879" Name="Start">
+                    <Description />
+                    <Priority>1</Priority>
+                    <Icon XCOORD="156" YCOORD="207" WIDTH="38" HEIGHT="38" />
+                    <ExtendedAttributes>
+                        <ExtendedAttribute Name="IsAutomatic" Value="2" />
+                        <ExtendedAttribute Name="OverTimeHandleRule" Value="发出警告" />
+                    </ExtendedAttributes>
+                </Activity>
+            </Activities>
+            <Transitions>
+                <Transition Id="5" From="7666b388-bf6d-4f43-8209-df0a688cf573" To="6e34ae3b-92fe-4f52-938f-7b8229ca1ba3">
+                    <Condition>0</Condition>
+                </Transition>
+                <Transition Id="4" From="7666b388-bf6d-4f43-8209-df0a688cf573" To="0794f251-daa2-41d1-8ec0-da0102eb8344">
+                    <Condition>1</Condition>
+                </Transition>
+                <Transition Id="3" From="90674bc7-4cf5-4e29-ba28-717d7dcdbc93" To="7666b388-bf6d-4f43-8209-df0a688cf573">
+                    <Condition>1</Condition>
+                </Transition>
+                <Transition Id="2" From="54c381f6-6ae1-41ba-90a0-1e4801995073" To="90674bc7-4cf5-4e29-ba28-717d7dcdbc93">
+                    <Condition>1</Condition>
+                </Transition>
+                <Transition Id="1" From="6e34ae3b-92fe-4f52-938f-7b8229ca1ba3" To="54c381f6-6ae1-41ba-90a0-1e4801995073">
+                    <Condition>1</Condition>
+                </Transition>
+                <Transition Id="0" From="89b94347-be1a-49c3-b6c9-272e9549d879" To="6e34ae3b-92fe-4f52-938f-7b8229ca1ba3">
+                    <Condition>1</Condition>
+                </Transition>
+            </Transitions>
+            <ExtendedAttributes>
+                <ExtendedAttribute Name="OverTimeHandleRule" Value="发出警报" />
+                <ExtendedAttribute Name="Classification" Value="3" />
+                <ExtendedAttribute Name="Option" Value="2" />
+            </ExtendedAttributes>
+        </WorkflowProcess>
+    </WorkflowProcesses>
+</Package>

@@ -1,0 +1,5 @@
+E:\2018\青岛三合山\Code\BOMExport\TiPLM_BOMExport\Export\ExportToERPPlugin.dll
+E:\2018\青岛三合山\Code\BOMExport\TiPLM_BOMExport\Export\ExportToERPPlugin.pdb
+E:\2018\青岛三合山\Code\BOMExport\TiPLM_BOMExport\ExportToERPPlugin\obj\Debug\ExportToERPPlugin.csprojResolveAssemblyReference.cache
+E:\2018\青岛三合山\Code\BOMExport\TiPLM_BOMExport\ExportToERPPlugin\obj\Debug\ExportToERPPlugin.dll
+E:\2018\青岛三合山\Code\BOMExport\TiPLM_BOMExport\ExportToERPPlugin\obj\Debug\ExportToERPPlugin.pdb
