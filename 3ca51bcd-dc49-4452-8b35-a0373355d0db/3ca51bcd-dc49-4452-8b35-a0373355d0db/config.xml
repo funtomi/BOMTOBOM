@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ERPIntegratorConfig Ver="1.0">
+	<config>
+		<EAIAddress>http://192.168.0.18/u8eai/import.asp</EAIAddress>
+    <AccountSets> 
+	  <sender>001</sender>
+	  <sender>002</sender>
+    </AccountSets>
+    <PLMClass>
+      <Ignore>CPBJ,GZJ,GZC,GJQBZJ</Ignore>
+    </PLMClass>
+	</config>
+</ERPIntegratorConfig>

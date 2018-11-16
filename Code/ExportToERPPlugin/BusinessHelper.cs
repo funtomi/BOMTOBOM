@@ -46,27 +46,32 @@ namespace ExportToERPPluginCLT {
             return bItem;
         }
 
+        //20181113 modified by kexp 修改为导入完成后统一提示一次；
         /// <summary>
         /// 导入到ERP
         /// </summary>
         /// <param name="bItem"></param>
-        public void ExportToERP(DEBusinessItem bItem) {
+        public void ExportToERP(DEBusinessItem bItem,out string errText) {
+            errText = "";
             if (bItem==null) {
-                MessageBoxPLM.Show("没有获取到对象！");
+                errText="没有获取到对象！";
+                return;
             }
             ExportService srv = new ExportService(bItem);
-            srv.AddOrEditItem();
+            srv.AddOrEditItem(out errText);
         }
 
-        public void ExportToERP(DEBusinessItem bItem, bool isRelease) {
+        //20181113 modified by kexp 修改为导入完成后统一提示一次；
+        public void ExportToERP(DEBusinessItem bItem, bool isRelease,out string errText) {
+            errText = "";
             if (!isRelease) {
                 var state = bItem.State;
                 if (state!= ItemState.Release) {
-                    MessageBoxPLM.Show(string.Format("{0}没有定版，不能直接导入ERP！", bItem.Name));
+                    errText=string.Format("{0}没有定版，不能直接导入ERP！", bItem.Name);
                     return;
                 }
             }
-            ExportToERP(bItem);
+            ExportToERP(bItem,out errText);
         }
     }
 }

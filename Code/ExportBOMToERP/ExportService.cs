@@ -51,6 +51,22 @@ namespace ExportBOMToERP {
         //20180821 added by kexp 添加对已有且不需要导入的项定版时判断
         private static string SYS_ERROR = "sys_error";
         private static string EAI_SENDER_SEQ = "EAISENDERSEQ";
+        //20181113 added by kexp 添加对不需要传入的类型的配置
+        private static string CONFIG_IGNORE_CLASSNAME = "PLMClass";
+        private static string CONFIG_PLM_CLASS = "Ignore";
+
+        /// <summary>
+        /// 不需要导入erp的类型
+        /// </summary>
+        public string[] IgnoreClasses {
+            get {
+                if (_ignoreClasses==null) {
+                    GetEAIConfig();
+                }
+                return _ignoreClasses; }
+        }
+        private string[] _ignoreClasses;
+
         protected string EaiAddress {
             get {
                 if (string.IsNullOrEmpty(_eaiAddress)) {
@@ -105,7 +121,7 @@ namespace ExportBOMToERP {
             // added by kexp获取sender
             //20181102 added by kexp 添加多账套配置
             var accNode = doc.SelectSingleNode("ERPIntegratorConfig//config//AccountSets");
-            if (accNode!=null||!string.IsNullOrEmpty(accNode.InnerText)) {
+            if (accNode!=null&&!string.IsNullOrEmpty(accNode.InnerText)) {
                 var senderNodes = accNode.SelectNodes("sender");
                 if (senderNodes == null || senderNodes.Count == 0) {
                     _senders = new string[] { "001" };
@@ -119,25 +135,56 @@ namespace ExportBOMToERP {
                     }
                 }
             }
+
+            //20181113 added by kexp 添加不导入erp的配置
+            _ignoreClasses = null;
+            var plmClassNode = doc.SelectSingleNode("ERPIntegratorConfig/config/" + CONFIG_IGNORE_CLASSNAME);
+            if (plmClassNode!=null&&plmClassNode.ChildNodes!=null&&plmClassNode.ChildNodes.Count>0) {
+                var ignoreNodes = plmClassNode.SelectSingleNode(CONFIG_PLM_CLASS);
+                if (ignoreNodes!=null) {
+                    var classes = ignoreNodes.InnerText;
+                    if (!string.IsNullOrEmpty(classes)) {
+                        var ignores = classes.Split(',');
+                        if (ignores!=null&&ignores.Length>0) {
+                            _ignoreClasses = new string[ignores.Length];
+                            for (int i = 0; i < ignores.Length; i++) {
+                                _ignoreClasses[i] = ignores[i].Trim().ToLower();
+                            }
+                        }
+                    }
+                }
+            }
             return add;
         }
+
+        private void GetIgnoreClasses(DEBusinessItem item) {
+            var senderSeq = item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ) == null ? "0" : item.GetAttrValue(item.ClassName, EAI_SENDER_SEQ).ToString();
+            var seqArr = senderSeq.Split(',');
+            if (seqArr == null || seqArr.Length == 0) {
+                return;
+            }
+            _senderSeq = new int[seqArr.Length];
+            for (int i = 0; i < seqArr.Length; i++) {
+                var seq = Convert.ToInt16(seqArr[i].Trim());
+                _senderSeq[i] = seq;
+            }
+        }
         #region 导出导入
-        public void AddOrEditItem() {
+        //20181113 modified by kexp 修改为导入完成后统一提示一次；
+        public void AddOrEditItem(out string errText) {
             if (_bItem == null) {
-                MessageBoxPLM.Show("没有获取到当前对象，请检查！");
+                errText="没有获取到当前对象，请检查！";
                 return;
             }
             //string oprt = item.LastRevision > 1 ? "Edit" : "Add";
             bool succeed;
-            string errText;
 
             succeed = DoExport(out errText, _bItem);
             //20180821 added by kexp 添加对已有且不需要导入的项定版时判断
             if (!succeed&&!string.IsNullOrEmpty(errText)&&!errText.Equals(SYS_ERROR)) { 
-                MessageBoxPLM.Show(errText);
                 return;
             }
-            MessageBoxPLM.Show("ERP导入成功!");
+            errText="ERP导入成功!";
         }
 
         /// <summary>
@@ -173,10 +220,14 @@ namespace ExportBOMToERP {
             }
             XmlDocument doc = new XmlDocument();
             errText = "";
-            var dal = DalFactory.Instance.CreateDal(bItem, typeStr);
+            var dal = DalFactory.Instance.CreateDal(bItem, typeStr,IgnoreClasses);
             bool succeed = true;
             string hasStr = "重复";
             string oprt = "Add";
+            // added by kexp bug：未找到类型时会报空引用错误；
+            if (dal==null) {
+                return false;
+            }
             doc = dal.CreateXmlDocument(oprt);
             if (doc == null) {
                 return false;
@@ -230,6 +281,7 @@ namespace ExportBOMToERP {
             //var u8key =itemNode.Attributes["u8key"].ToString();
             //var proc = itemNode.Attributes["proc"].ToString();
             if (succeed != 0) {
+                //errText = responseXml;
                 errText = string.Format("ERP导入失败，原因：{0}", dsc);
 
                 PLMEventLog.WriteLog(dsc, EventLogEntryType.Error);

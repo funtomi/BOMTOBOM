@@ -32,7 +32,7 @@ namespace ExportToERPPluginCLT {
         private const string SINGLE = "Single";
         //OPERATION_BINDING_COLLECTION
         private const string OBCOLLECTION_PRODUCT = "PLM";
-        private static List<string> OBCOLLECTION_CLASSNAME = new List<string>() { "PART", "BASEDOC", "GYGCK", "GXK" };
+        private static List<string> OBCOLLECTION_CLASSNAME = new List<string>() { "PART", "BASEDOC", "GYGCK", "GXK", "TIPART" };
         private static List<string> OBCOLLECTION_SENCE = new List<string>() { "CheckOutFolder", "CheckOutRootFolder", "ItemList", "PPCardTemplateList", "PublicFolder", "PublicRootFolder","RelationTreeRoot"
 ,"RelationTreeChild"};
         private static List<string> OBCOLLECTION_MODE = new List<string>() { "Single" };
@@ -138,11 +138,13 @@ namespace ExportToERPPluginCLT {
             BizItemHandlerEvent.Instance.D_AfterReleased = (PLMBizItemDelegate)Delegate.Remove(BizItemHandlerEvent.Instance.D_AfterReleased, this.d_AfterReleased);
         }
 
+        //20181113 modified by kexp 修改为导入完成后统一提示一次；
         /// <summary>
         /// 定版后启动
         /// </summary>
         /// <param name="bizItems"></param>
         private void AfterItemReleased(IBizItem[] bizItems) {
+            string message = "";
             if (bizItems != null) {
                 ArrayList list = new ArrayList(bizItems);
                 foreach (object obj2 in list) {
@@ -150,12 +152,22 @@ namespace ExportToERPPluginCLT {
                         IBizItem item = (IBizItem)obj2;
                         //ExportExecute(item);
                         var bItem = BusinessHelper.Instance.GetDEBusinessItem(item);
-                        //var ss = OperationConfigHelper.Instance;
-
-                        BusinessHelper.Instance.ExportToERP(bItem,true);
+                        //var ss = OperationConfigHelper.Instance; 
+                        string errText;
+                        BusinessHelper.Instance.ExportToERP(bItem,true,out errText);
+                        if (errText == "ERP导入成功!") {
+                            continue;
+                        } else {
+                            message = errText;
+                            break;
+                        }
                     }
                 }
             }
+            if (string.IsNullOrEmpty(message)&&!message.Equals("sys_error")) {
+                return;
+            }
+            MessageBoxPLM.Show(message);
         }
         #region 测试菜单
 

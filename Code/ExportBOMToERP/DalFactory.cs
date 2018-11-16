@@ -22,13 +22,13 @@ namespace ExportBOMToERP {
         /// <param name="typeStr"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        public BaseDal CreateDal(DEBusinessItem item,string typeStr) {
+        public BaseDal CreateDal(DEBusinessItem item,string typeStr,string[] ignoreClasses) {
             if (item==null) {
                 return null;
             }
             BaseDal dal = null;
             BusinessType type;
-            var hasDefine = this.TryGetBusinessType(typeStr, out type);
+            var hasDefine = this.TryGetBusinessType(typeStr,ignoreClasses, out type);
             if (!hasDefine) {
                 return null;
             }
@@ -70,18 +70,22 @@ namespace ExportBOMToERP {
         /// <param name="type"></param>
         /// <param name="businessType"></param>
         /// <returns></returns>
-        public bool TryGetBusinessType(string type,out BusinessType businessType) {
+        public bool TryGetBusinessType(string type,string[] ignoreClasses,out BusinessType businessType) {
             businessType = BusinessType.Unit;
             if (string.IsNullOrEmpty(type)) {
                 return false;
             }
-            switch (type.ToLower()) {
+            var ctype = type.ToLower();
+            if (ignoreClasses != null && ignoreClasses.Length > 0 && ignoreClasses.Contains<string>(ctype)) {
+                return false;
+            }
+            switch (ctype) {
                 default:
                     var parent = ModelContext.MetaModel.GetParent(type);
                     if (parent==null) {
                         return false;
                     }
-                    return TryGetBusinessType(parent.Name, out businessType);
+                    return TryGetBusinessType(parent.Name, ignoreClasses,out businessType);
                 case "unit":
                     businessType = BusinessType.Unit;
                     break;

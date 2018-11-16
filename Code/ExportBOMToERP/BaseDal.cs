@@ -162,14 +162,16 @@ namespace ExportBOMToERP {
         /// <param name="relation"></param>
         /// <returns></returns>
         protected DERelationBizItemList GetLinks(DEBusinessItem item, string relation) {
-            DERelationBizItemList relationBizItemList = item.Iteration.LinkRelationSet.GetRelationBizItemList(relation);
-            if (relationBizItemList == null) {
-                try {
+            DERelationBizItemList relationBizItemList;
+            try {
+                relationBizItemList = item.Iteration.LinkRelationSet.GetRelationBizItemList(relation);
+                if (relationBizItemList == null) {
                     relationBizItemList = PLItem.Agent.GetLinkRelationItems(item.Iteration.Oid, item.Master.ClassName, relation, ClientData.LogonUser.Oid, ClientData.UserGlobalOption);
-                } catch {
-                    return null;
                 }
+            } catch {
+                return null;
             }
+
             return relationBizItemList;
         }
 

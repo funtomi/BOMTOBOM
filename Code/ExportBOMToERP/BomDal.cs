@@ -317,6 +317,9 @@ namespace ExportBOMToERP {
                         row[col] = rltVal == null ? 1 : rltVal;
                         break;
                     case "BaseQtyN":
+                        val = relation.GetAttrValue("NUMBER");
+                        row[col] = val == null ? 1m : val;
+                        break;
                     case "BaseQtyD":
                         row[col] = rltVal == null ? 1m : rltVal;
                         break;

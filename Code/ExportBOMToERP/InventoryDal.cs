@@ -156,9 +156,7 @@ namespace ExportBOMToERP {
             dt.Columns.Add("self_define13", typeof(decimal));//	自定义项13
             dt.Columns.Add("self_define14", typeof(decimal));//	自定义项14
             dt.Columns.Add("self_define15", typeof(DateTime));//	自定义项15
-            _dateNames.Add("self_define15");
             dt.Columns.Add("self_define16", typeof(DateTime));//	自定义项16
-            _dateNames.Add("self_define16");
             dt.Columns.Add("free_item3", typeof(int));//	自由项3
             dt.Columns.Add("free_item4", typeof(int));//	自由项4
             dt.Columns.Add("free_item5", typeof(int));//	自由项5
@@ -174,6 +172,7 @@ namespace ExportBOMToERP {
             dt.Columns.Add("stunit_code");//	库存默认计量单位编码
             dt.Columns.Add("caunit_code");//	成本默认计量单位编码
             dt.Columns.Add("unitgroup_name");//	计量单位组名称
+            dt.Columns.Add("ccomunitname");//	计量单位名称
             dt.Columns.Add("puunit_name");//	采购默认计量单位名称
             dt.Columns.Add("saunit_name");//	销售默认计量单位名称
             dt.Columns.Add("stunit_name");//	库存默认计量单位名称
@@ -186,7 +185,6 @@ namespace ExportBOMToERP {
             dt.Columns.Add("frequency", typeof(int));//	盘点周期
             dt.Columns.Add("check_day", typeof(int));//	盘点日
             dt.Columns.Add("lastcheck_date", typeof(DateTime));//	上次盘点日期
-            _dateNames.Add("lastcheck_date");
             dt.Columns.Add("wastage", typeof(decimal));//	合理损耗率
             dt.Columns.Add("solitude", typeof(int));//	是否单独存放
             dt.Columns.Add("enterprise");//	生产企业
@@ -226,6 +224,7 @@ namespace ExportBOMToERP {
             dt.Columns.Add("QTMethod", typeof(int));//质量检验方案
             dt.Columns.Add("bPlanInv", typeof(int));//是否计划品
             dt.Columns.Add("bProxyForeign", typeof(int));//	是否委外
+            dt.Columns.Add("bFeatureMatch", typeof(int));
             dt.Columns.Add("bATOModel", typeof(int));//	是否ATO模型
             dt.Columns.Add("bCheckItem", typeof(int));//	是否选项类
             dt.Columns.Add("bPTOModel", typeof(int));//	是否PTO模型
@@ -326,6 +325,121 @@ namespace ExportBOMToERP {
             dt.Columns.Add("fminsplit", typeof(decimal));//	最小分割量
             dt.Columns.Add("bspecialorder", typeof(int));//	客户订单专用
             dt.Columns.Add("btracksalebill", typeof(int));//	销售跟单
+            dt.Columns.Add("fbuyexcess");
+            dt.Columns.Add("isurenesstype",typeof(int));//	安全库存方法
+            dt.Columns.Add("idatetype");//	期间类型
+            dt.Columns.Add("idatesum	");//期间数
+            dt.Columns.Add("idynamicsurenesstype	");//动态安全库存方法
+            dt.Columns.Add("ibestrowsum");//	覆盖天数
+            dt.Columns.Add("ipercentumsum");//	百分比
+            dt.Columns.Add("iexpiratdatecalcu", typeof(int));
+            dt.Columns.Add("bpurpricefree1", typeof(int));
+            dt.Columns.Add("bpurpricefree2", typeof(int));
+            dt.Columns.Add("bpurpricefree3", typeof(int));
+            dt.Columns.Add("bpurpricefree4", typeof(int));
+            dt.Columns.Add("bpurpricefree5", typeof(int));
+            dt.Columns.Add("bpurpricefree6", typeof(int));
+            dt.Columns.Add("bpurpricefree7", typeof(int));
+            dt.Columns.Add("bpurpricefree8", typeof(int));
+            dt.Columns.Add("bpurpricefree9", typeof(int));
+            dt.Columns.Add("bpurpricefree10", typeof(int));
+            dt.Columns.Add("bompricefree1", typeof(int));
+            dt.Columns.Add("bompricefree2", typeof(int));
+            dt.Columns.Add("bompricefree3", typeof(int));
+            dt.Columns.Add("bompricefree4", typeof(int));
+            dt.Columns.Add("bompricefree5", typeof(int));
+            dt.Columns.Add("bompricefree6", typeof(int));
+            dt.Columns.Add("bompricefree7", typeof(int));
+            dt.Columns.Add("bompricefree8", typeof(int));
+            dt.Columns.Add("bompricefree9", typeof(int));
+            dt.Columns.Add("bompricefree10", typeof(int));
+            dt.Columns.Add("bsalepricefree1", typeof(int));
+            dt.Columns.Add("bsalepricefree2", typeof(int));
+            dt.Columns.Add("bsalepricefree3", typeof(int));
+            dt.Columns.Add("bsalepricefree4", typeof(int));
+            dt.Columns.Add("bsalepricefree5", typeof(int));
+            dt.Columns.Add("bsalepricefree6", typeof(int));
+            dt.Columns.Add("bsalepricefree7", typeof(int));
+            dt.Columns.Add("bsalepricefree8", typeof(int));
+            dt.Columns.Add("bsalepricefree9", typeof(int));
+            dt.Columns.Add("bsalepricefree10", typeof(int));
+            dt.Columns.Add("finvoutuplimit");
+            dt.Columns.Add("bbondedinv", typeof(int));
+            dt.Columns.Add("bbatchcreate", typeof(int));
+            dt.Columns.Add("bbatchproperty1", typeof(int));
+            dt.Columns.Add("bbatchproperty2", typeof(int));
+            dt.Columns.Add("bbatchproperty3", typeof(int));
+            dt.Columns.Add("bbatchproperty4", typeof(int));
+            dt.Columns.Add("bbatchproperty5", typeof(int));
+            dt.Columns.Add("bbatchproperty6", typeof(int));
+            dt.Columns.Add("bbatchproperty7", typeof(int));
+            dt.Columns.Add("bbatchproperty8", typeof(int));
+            dt.Columns.Add("bbatchproperty9", typeof(int));
+            dt.Columns.Add("bbatchproperty10", typeof(int));
+            dt.Columns.Add("bcontrolfreerange1", typeof(int));
+            dt.Columns.Add("bcontrolfreerange2", typeof(int));
+            dt.Columns.Add("bcontrolfreerange3", typeof(int));
+            dt.Columns.Add("bcontrolfreerange4", typeof(int));
+            dt.Columns.Add("bcontrolfreerange5", typeof(int));
+            dt.Columns.Add("bcontrolfreerange6", typeof(int));
+            dt.Columns.Add("bcontrolfreerange7", typeof(int));
+            dt.Columns.Add("bcontrolfreerange8", typeof(int));
+            dt.Columns.Add("bcontrolfreerange9", typeof(int));
+            dt.Columns.Add("bcontrolfreerange10", typeof(int));
+            dt.Columns.Add("iwarrantyperiod");
+            dt.Columns.Add("fcurllaborcost");
+            dt.Columns.Add("fcurlvarmanucost");
+            dt.Columns.Add("fcurlfixmanucost");
+            dt.Columns.Add("fcurlomcost");
+            dt.Columns.Add("fnextllaborcost");
+            dt.Columns.Add("fnextlvarmanucost");
+            dt.Columns.Add("fnextlfixmanucost");
+            dt.Columns.Add("fnextlomcost");
+            dt.Columns.Add("fprjmatlimit");
+            dt.Columns.Add("bprjmat", typeof(int));
+            dt.Columns.Add("binvasset", typeof(int));
+            dt.Columns.Add("bsrvproduct", typeof(int));
+            dt.Columns.Add("iacceptdelaydays", typeof(int));
+            dt.Columns.Add("cInvMnemCode");
+            dt.Columns.Add("iMaterialsCycle"); 
+            dt.Columns.Add("iPlanCheckDay", typeof(int));
+            dt.Columns.Add("dinvcreatedatetime",typeof(DateTime));
+            dt.Columns.Add("iwarrantyunit", typeof(int));
+            dt.Columns.Add("binvrohs", typeof(int));
+            dt.Columns.Add("bmaintenance", typeof(int));
+            dt.Columns.Add("imaintenancecycleunit", typeof(int));
+            dt.Columns.Add("imaintenancecycle");
+            dt.Columns.Add("bCheckBatch", typeof(int));//批次核算
+            dt.Columns.Add("iPlanDefault", typeof(int));//计划默认属性
+            dt.Columns.Add("cInvADDCode", typeof(int));//存货代码 
+            dt.Columns.Add("bchecksubitemcost", typeof(int));//	是否核算分项成本
+            dt.Columns.Add("bpuquota", typeof(int));//	参与配额  
+            dt.Columns.Add("binbyprocheck", typeof(int));//	产品须根据检验结果入库  
+            dt.Columns.Add("binvkeypart ", typeof(int));//	关键物料 
+            dt.Columns.Add("iacceptearlydays ", typeof(int));
+            dt.Columns.Add("finvciqexch", typeof(decimal));//	海关单位换算率 
+            dt.Columns.Add("irequiretrackstyle", typeof(int));//	需求跟踪方式     
+            dt.Columns.Add("idrawtype", typeof(int));
+            dt.Columns.Add("bSCkeyProjections", typeof(int));
+            dt.Columns.Add("iSupplyPeriodType", typeof(int));
+            dt.Columns.Add("iAvailabilityDate", typeof(int));
+            dt.Columns.Add("bimport", typeof(int));
+            dt.Columns.Add("bsuitretail ", typeof(int));
+            dt.Columns.Add("bcoupon", typeof(int));
+            dt.Columns.Add("bstorecard", typeof(int));
+            dt.Columns.Add("bprocessproduct", typeof(int));
+            dt.Columns.Add("bprocessmaterial", typeof(int));
+            dt.Columns.Add("froundfactor", typeof(int));
+            dt.Columns.Add("bconsiderfreestock", typeof(int));
+            dt.Columns.Add("breceiptbydt", typeof(int));
+            dt.Columns.Add("bkccutmantissa", typeof(int));
+            dt.Columns.Add("iAllocatePrintDgt", typeof(int));
+            dt.Columns.Add("bMngOldpart", typeof(int));
+            dt.Columns.Add("iTimeBucketId");
+            dt.Columns.Add("fmaterialcost");
+            dt.Columns.Add("inearrejectdays");
+            dt.Columns.Add("iPFBatchQty");
+            dt.Columns.Add("iOldpartMngRule");
             return dt;
 
         }
@@ -350,13 +464,13 @@ namespace ExportBOMToERP {
             dt.Columns.Add("fixqty");//	固定供应量
             dt.Columns.Add("cbasengineerfigno");//	工程图号
             dt.Columns.Add("fbasmaxsupply");//	最高供应量
-            dt.Columns.Add("isurenesstype");//	安全库存方法
+            dt.Columns.Add("isurenesstype",typeof(int));//	安全库存方法
             dt.Columns.Add("idatetype");//	期间类型
             dt.Columns.Add("idatesum	");//期间数
             dt.Columns.Add("idynamicsurenesstype	");//动态安全库存方法
             dt.Columns.Add("ibestrowsum");//	覆盖天数
             dt.Columns.Add("ipercentumsum");//	百分比
-            dt.Columns.Add("bfreestop", typeof(int));//	停用
+            dt.Columns.Add("bfreestop", typeof(int));//	停用 
             return dt;
         }
 
